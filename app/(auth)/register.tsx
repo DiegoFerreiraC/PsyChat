@@ -5,6 +5,11 @@ import {
   TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import { useState } from "react";
 import { supabase } from "../../lib/supabase";
@@ -106,80 +111,99 @@ export default function Register() {
   }
 
   return (
-    <View style={styles.container}>
-      {/* LOGO */}
-      <View style={styles.logoContainer}>
-        <View style={styles.logoIcon}>
-          <Ionicons name="chatbubbles" size={28} color={COLORS.white} />
-        </View>
-        <Text style={styles.logoText}>PsyChat</Text>
-        <Text style={styles.subtitle}>Crie sua conta para começar</Text>
-      </View>
-
-      {/* CARD */}
-      <View style={styles.card}>
-        <Text style={styles.title}>Cadastro</Text>
-
-        <TextInput
-          placeholder="Usuário"
-          placeholderTextColor={COLORS.placeholder}
-          value={username}
-          onChangeText={setUsername}
-          style={styles.input}
-          autoCapitalize="none"
-        />
-
-        <TextInput
-          placeholder="Email"
-          placeholderTextColor={COLORS.placeholder}
-          value={email}
-          onChangeText={setEmail}
-          style={styles.input}
-          keyboardType="email-address"
-          autoCapitalize="none"
-        />
-
-        <View style={styles.passwordContainer}>
-          <TextInput
-            placeholder="Senha"
-            placeholderTextColor={COLORS.placeholder}
-            secureTextEntry={!showPassword}
-            value={password}
-            onChangeText={setPassword}
-            style={styles.passwordInput}
-          />
-          <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-            <Ionicons
-              name={showPassword ? "eye" : "eye-off"}
-              size={22}
-              color={COLORS.textSecondary}
-            />
-          </TouchableOpacity>
-        </View>
-
-        <TouchableOpacity
-          onPress={handleRegister}
-          style={[styles.button, loading && { opacity: 0.7 }]}
-          disabled={loading}
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          keyboardShouldPersistTaps="handled"
         >
-          {loading ? (
-            <ActivityIndicator color={COLORS.white} />
-          ) : (
-            <Text style={styles.buttonText}>Criar conta</Text>
-          )}
-        </TouchableOpacity>
+          <View style={styles.container}>
+            {/* LOGO */}
+            <View style={styles.logoContainer}>
+              <View style={styles.logoIcon}>
+                <Ionicons name="chatbubbles" size={28} color={COLORS.white} />
+              </View>
+              <Text style={styles.logoText}>PsyChat</Text>
+              <Text style={styles.subtitle}>
+                Crie sua conta para começar
+              </Text>
+            </View>
 
-        <TouchableOpacity
-          onPress={() => router.push("/login")}
-          style={styles.link}
-        >
-          <Text style={styles.linkText}>Já tem conta? Entrar</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+            {/* CARD */}
+            <View style={styles.card}>
+              <Text style={styles.title}>Cadastro</Text>
+
+              <TextInput
+                placeholder="Usuário"
+                placeholderTextColor={COLORS.placeholder}
+                value={username}
+                onChangeText={setUsername}
+                style={styles.input}
+                autoCapitalize="none"
+              />
+
+              <TextInput
+                placeholder="Email"
+                placeholderTextColor={COLORS.placeholder}
+                value={email}
+                onChangeText={setEmail}
+                style={styles.input}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+
+              <View style={styles.passwordContainer}>
+                <TextInput
+                  placeholder="Senha"
+                  placeholderTextColor={COLORS.placeholder}
+                  secureTextEntry={!showPassword}
+                  value={password}
+                  onChangeText={setPassword}
+                  style={styles.passwordInput}
+                />
+                <TouchableOpacity
+                  onPress={() => setShowPassword(!showPassword)}
+                >
+                  <Ionicons
+                    name={showPassword ? "eye" : "eye-off"}
+                    size={22}
+                    color={COLORS.textSecondary}
+                  />
+                </TouchableOpacity>
+              </View>
+
+              <TouchableOpacity
+                onPress={handleRegister}
+                style={[styles.button, loading && { opacity: 0.7 }]}
+                disabled={loading}
+              >
+                {loading ? (
+                  <ActivityIndicator color={COLORS.white} />
+                ) : (
+                  <Text style={styles.buttonText}>Criar conta</Text>
+                )}
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => router.push("/login")}
+                style={styles.link}
+              >
+                <Text style={styles.linkText}>
+                  Já tem conta? Entrar
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </ScrollView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 }
 
+// 🔥 styles ORIGINAL (não mexi em nada)
 const styles = StyleSheet.create({
   container: {
     flex: 1,

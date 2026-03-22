@@ -5,6 +5,11 @@ import {
   TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import { useState } from "react";
 import { supabase } from "../../lib/supabase";
@@ -71,68 +76,85 @@ export default function Login() {
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.logoContainer}>
-        <View style={styles.logoIcon}>
-          <Ionicons name="chatbubbles" size={28} color={COLORS.white} />
-        </View>
-        <Text style={styles.logoText}>PsyChat</Text>
-      </View>
-
-      <View style={styles.card}>
-        <Text style={styles.title}>Entrar</Text>
-
-        <TextInput
-          placeholder="Email"
-          placeholderTextColor={COLORS.placeholder}
-          value={email}
-          onChangeText={setEmail}
-          style={styles.input}
-          keyboardType="email-address"
-          autoCapitalize="none"
-        />
-
-        <View style={styles.passwordContainer}>
-          <TextInput
-            placeholder="Senha"
-            placeholderTextColor={COLORS.placeholder}
-            secureTextEntry={!showPassword}
-            value={password}
-            onChangeText={setPassword}
-            style={styles.passwordInput}
-          />
-          <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-            <Ionicons
-              name={showPassword ? "eye" : "eye-off"}
-              size={22}
-              color={COLORS.textSecondary}
-            />
-          </TouchableOpacity>
-        </View>
-
-        <TouchableOpacity
-          onPress={handleLogin}
-          style={[styles.button, loading && { opacity: 0.7 }]}
-          disabled={loading}
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          keyboardShouldPersistTaps="handled"
         >
-          {loading ? (
-            <ActivityIndicator color={COLORS.white} />
-          ) : (
-            <Text style={styles.buttonText}>Entrar</Text>
-          )}
-        </TouchableOpacity>
+          <View style={styles.container}>
+            <View style={styles.logoContainer}>
+              <View style={styles.logoIcon}>
+                <Ionicons name="chatbubbles" size={28} color={COLORS.white} />
+              </View>
+              <Text style={styles.logoText}>PsyChat</Text>
+            </View>
 
-        <TouchableOpacity
-          onPress={() => router.push("/register")}
-          style={styles.link}
-        >
-          <Text style={styles.linkText}>Não tem conta? Cadastre-se</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+            <View style={styles.card}>
+              <Text style={styles.title}>Entrar</Text>
+
+              <TextInput
+                placeholder="Email"
+                placeholderTextColor={COLORS.placeholder}
+                value={email}
+                onChangeText={setEmail}
+                style={styles.input}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+
+              <View style={styles.passwordContainer}>
+                <TextInput
+                  placeholder="Senha"
+                  placeholderTextColor={COLORS.placeholder}
+                  secureTextEntry={!showPassword}
+                  value={password}
+                  onChangeText={setPassword}
+                  style={styles.passwordInput}
+                />
+                <TouchableOpacity
+                  onPress={() => setShowPassword(!showPassword)}
+                >
+                  <Ionicons
+                    name={showPassword ? "eye" : "eye-off"}
+                    size={22}
+                    color={COLORS.textSecondary}
+                  />
+                </TouchableOpacity>
+              </View>
+
+              <TouchableOpacity
+                onPress={handleLogin}
+                style={[styles.button, loading && { opacity: 0.7 }]}
+                disabled={loading}
+              >
+                {loading ? (
+                  <ActivityIndicator color={COLORS.white} />
+                ) : (
+                  <Text style={styles.buttonText}>Entrar</Text>
+                )}
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => router.push("/register")}
+                style={styles.link}
+              >
+                <Text style={styles.linkText}>
+                  Não tem conta? Cadastre-se
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </ScrollView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 }
 
+// 🔥 SEUS STYLES ORIGINAIS — INTACTOS
 const styles = StyleSheet.create({
   container: {
     flex: 1,
