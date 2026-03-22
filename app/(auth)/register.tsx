@@ -1,16 +1,4 @@
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  ActivityIndicator,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  TouchableWithoutFeedback,
-  Keyboard,
-} from "react-native";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView, TouchableWithoutFeedback, Keyboard } from "react-native";
 import { useState } from "react";
 import { supabase } from "../../lib/supabase";
 import { useRouter } from "expo-router";
@@ -121,7 +109,8 @@ export default function Register() {
           keyboardShouldPersistTaps="handled"
         >
           <View style={styles.container}>
-            {/* LOGO */}
+
+            
             <View style={styles.logoContainer}>
               <View style={styles.logoIcon}>
                 <Ionicons name="chatbubbles" size={28} color={COLORS.white} />
@@ -132,7 +121,7 @@ export default function Register() {
               </Text>
             </View>
 
-            {/* CARD */}
+            
             <View style={styles.card}>
               <Text style={styles.title}>Cadastro</Text>
 
@@ -203,7 +192,6 @@ export default function Register() {
   );
 }
 
-// 🔥 styles ORIGINAL (não mexi em nada)
 const styles = StyleSheet.create({
   container: {
     flex: 1,

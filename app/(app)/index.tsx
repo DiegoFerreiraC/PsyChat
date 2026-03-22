@@ -1,16 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  FlatList,
-  TextInput,
-  KeyboardAvoidingView,
-  Platform,
-  Animated,
-  BackHandler,
-} from "react-native";
+import { useState, useRef, useEffect } from "react";
+import { View, Text, TouchableOpacity, StyleSheet, FlatList, TextInput, KeyboardAvoidingView, Platform, Animated, BackHandler } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import DrawerMenu from "./menu";

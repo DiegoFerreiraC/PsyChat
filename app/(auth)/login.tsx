@@ -1,16 +1,4 @@
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  ActivityIndicator,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  TouchableWithoutFeedback,
-  Keyboard,
-} from "react-native";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView, TouchableWithoutFeedback, Keyboard} from "react-native";
 import { useState } from "react";
 import { supabase } from "../../lib/supabase";
 import { useRouter } from "expo-router";
@@ -154,7 +142,6 @@ export default function Login() {
   );
 }
 
-// 🔥 SEUS STYLES ORIGINAIS — INTACTOS
 const styles = StyleSheet.create({
   container: {
     flex: 1,

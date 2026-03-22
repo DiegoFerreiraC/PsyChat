@@ -1,13 +1,5 @@
 import React, { useRef } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Animated,
-  StyleSheet,
-  PanResponder,
-  Alert,
-} from "react-native";
+import { View, Text, TouchableOpacity, Animated, StyleSheet, PanResponder, Alert,} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -87,14 +79,12 @@ export default function Menu({
           text: "Sim",
           onPress: async () => {
             try {
-              // 🔐 encerra sessão no Supabase
+              
               await supabase.auth.signOut();
 
-              // 🧹 limpa dados locais (caso tenha usado)
               await AsyncStorage.removeItem("@user_token");
               await AsyncStorage.removeItem("@user_data");
 
-              // 🔁 redireciona
               router.replace("/login");
             } catch (error) {
               console.log("Erro ao sair:", error);
