@@ -16,7 +16,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import axios from "axios";
 
-import DrawerMenu from "./menu";
+import DrawerMenu from "../(app)/menu";
 
 import { useAuth } from "../../contexts/AuthContext";
 import { supabase } from "../../lib/supabase";
@@ -46,18 +46,14 @@ type Message = {
   fromUser: boolean;
 };
 
-export default function ChatScreen() {
+export default function ChatConversationScreen() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const [conversationId, setConversationId] =
-    useState<string | null>(null);
-
   const { user } = useAuth();
 
-  const { conversationId: routeConversationId } =
-    useLocalSearchParams();
+  const { id } = useLocalSearchParams();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -118,27 +114,17 @@ export default function ChatScreen() {
   }, [messages]);
 
   useEffect(() => {
-    console.log(
-      "ROUTE CONVERSATION:",
-      routeConversationId
-    );
-
-    if (
-      routeConversationId &&
-      typeof routeConversationId === "string"
-    ) {
+    if (id && typeof id === "string") {
       setMessages([]);
 
-      loadMessages(routeConversationId);
+      loadMessages(id);
     }
-  }, [routeConversationId]);
+  }, [id]);
 
   const loadMessages = async (
     conversationId: string
   ) => {
     try {
-      console.log("LOAD ID:", conversationId);
-
       const { data, error } = await supabase
         .from("messages")
         .select("*")
@@ -146,9 +132,6 @@ export default function ChatScreen() {
         .order("created_at", {
           ascending: true,
         });
-
-      console.log("MESSAGES:", data);
-      console.log("ERROR:", error);
 
       if (error) {
         console.log(error);
@@ -164,36 +147,10 @@ export default function ChatScreen() {
           fromUser: msg.from_user,
         }));
 
-      setConversationId(conversationId);
-
       setMessages(formattedMessages);
     } catch (err) {
       console.log(err);
     }
-  };
-
-  const createConversation = async () => {
-    if (!user) return null;
-
-    const { data, error } = await supabase
-      .from("conversations")
-      .insert([
-        {
-          user_id: user.id,
-          title: inputText.trim().slice(0, 30),
-        },
-      ])
-      .select()
-      .single();
-
-    if (error) {
-      console.log(error);
-      return null;
-    }
-
-    setConversationId(data.id);
-
-    return data.id;
   };
 
   const saveMessage = async (
@@ -217,16 +174,13 @@ export default function ChatScreen() {
   };
 
   const sendMessage = async () => {
-    if (!inputText.trim() || loading) return;
-
-    let currentConversationId = conversationId;
-
-    if (!currentConversationId) {
-      currentConversationId =
-        await createConversation();
-    }
-
-    if (!currentConversationId) return;
+    if (
+      !inputText.trim() ||
+      loading ||
+      !id ||
+      typeof id !== "string"
+    )
+      return;
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -236,11 +190,7 @@ export default function ChatScreen() {
 
     setMessages((prev) => [...prev, userMessage]);
 
-    await saveMessage(
-      currentConversationId,
-      userMessage.text,
-      true
-    );
+    await saveMessage(id, userMessage.text, true);
 
     const currentMessage = inputText;
 
@@ -264,11 +214,7 @@ export default function ChatScreen() {
 
       setMessages((prev) => [...prev, botMessage]);
 
-      await saveMessage(
-        currentConversationId,
-        botMessage.text,
-        false
-      );
+      await saveMessage(id, botMessage.text, false);
     } catch (error) {
       console.log(error);
 
@@ -369,13 +315,11 @@ export default function ChatScreen() {
               />
 
               <Text style={styles.emptyTitle}>
-                Bem-vindo ao PsyChat
+                Conversa vazia
               </Text>
 
               <Text style={styles.emptyText}>
-                Converse com a IA para
-                receber apoio emocional,
-                reflexões e conselhos.
+                Continue a conversa com a IA.
               </Text>
             </View>
           }

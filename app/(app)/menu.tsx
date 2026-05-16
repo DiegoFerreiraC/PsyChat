@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { View, Text, TouchableOpacity, Animated, StyleSheet, PanResponder, Alert,} from "react-native";
+import { View, Text, TouchableOpacity, Animated, StyleSheet, PanResponder, Alert, } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -68,32 +68,30 @@ export default function Menu({
       },
     })
   ).current;
+  const handleLogout = async () => {
+    try {
+      closeDrawer();
 
-  const handleLogout = () => {
-    Alert.alert(
-      "Sair do aplicativo",
-      "Deseja sair do aplicativo?",
-      [
-        { text: "Não", style: "cancel" },
-        {
-          text: "Sim",
-          onPress: async () => {
-            try {
-              
-              await supabase.auth.signOut();
+      const { error } =
+        await supabase.auth.signOut();
 
-              await AsyncStorage.removeItem("@user_token");
-              await AsyncStorage.removeItem("@user_data");
+      if (error) {
+        console.log(error);
+        return;
+      }
 
-              router.replace("/login");
-            } catch (error) {
-              console.log("Erro ao sair:", error);
-            }
-          },
-        },
-      ],
-      { cancelable: true }
-    );
+      await AsyncStorage.removeItem(
+        "@user_token"
+      );
+
+      await AsyncStorage.removeItem(
+        "@user_data"
+      );
+
+      router.replace("/login");
+    } catch (error) {
+      console.log("Erro ao sair:", error);
+    }
   };
 
   return (
@@ -125,7 +123,7 @@ export default function Menu({
             style={styles.drawerItem}
             onPress={() => {
               closeDrawer();
-              router.push("/(app)/tabs/profile");
+              router.push("../tabs/profile");
             }}
           >
             <Ionicons name="person-outline" size={20} color={COLORS.primaryDark} />
@@ -136,7 +134,7 @@ export default function Menu({
             style={styles.drawerItem}
             onPress={() => {
               closeDrawer();
-              router.push("/(app)/tabs/history");
+              router.push("../tabs/history");
             }}
           >
             <Ionicons name="time-outline" size={20} color={COLORS.primaryDark} />
@@ -147,7 +145,7 @@ export default function Menu({
             style={styles.drawerItem}
             onPress={() => {
               closeDrawer();
-              router.push("/(app)/tabs/new-chat");
+              router.push("/");
             }}
           >
             <Ionicons
@@ -155,7 +153,28 @@ export default function Menu({
               size={20}
               color={COLORS.primaryDark}
             />
-            <Text style={styles.drawerItemText}>Novo Chat</Text>
+
+            <Text style={styles.drawerItemText}>
+              Novo chat
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.drawerItem}
+            onPress={() => {
+              closeDrawer();
+              router.push("/suport/apoio");
+            }}
+          >
+            <Ionicons
+              name="location-outline"
+              size={20}
+              color={COLORS.primaryDark}
+            />
+
+            <Text style={styles.drawerItemText}>
+              Apoio próximo
+            </Text>
           </TouchableOpacity>
 
           <View style={{ flex: 1 }} />
@@ -164,6 +183,7 @@ export default function Menu({
             <Ionicons name="log-out-outline" size={20} color={COLORS.danger} />
             <Text style={styles.logoutText}>Sair</Text>
           </TouchableOpacity>
+
         </SafeAreaView>
       </Animated.View>
     </>
@@ -178,7 +198,7 @@ const styles = StyleSheet.create({
     left: 0,
     width: DRAWER_WIDTH,
     backgroundColor: COLORS.drawer,
-    zIndex: 10,
+    zIndex: 100,
     elevation: 6,
     borderTopRightRadius: 20,
     borderBottomRightRadius: 20,
@@ -270,6 +290,6 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     backgroundColor: COLORS.overlay,
-    zIndex: 5,
+    zIndex: 50,
   },
 });

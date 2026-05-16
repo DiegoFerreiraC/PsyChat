@@ -1,8 +1,25 @@
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView, TouchableWithoutFeedback, Keyboard} from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from "react-native";
+
 import { useState } from "react";
+
 import { supabase } from "../../lib/supabase";
+
 import { useRouter } from "expo-router";
+
 import Toast from "react-native-toast-message";
+
 import { Ionicons } from "@expo/vector-icons";
 
 const COLORS = {
@@ -22,71 +39,163 @@ const COLORS = {
 
 export default function Login() {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+
+  const [password, setPassword] =
+    useState("");
+
+  const [loading, setLoading] =
+    useState(false);
+
+  const [showPassword, setShowPassword] =
+    useState(false);
+
   const router = useRouter();
 
   async function handleLogin() {
     if (loading) return;
 
     if (!email || !password) {
-      Toast.show({ type: "error", text1: "Preencha todos os campos" });
+      Toast.show({
+        type: "error",
+        text1: "Preencha todos os campos",
+      });
+
       return;
     }
 
     setLoading(true);
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: email.trim().toLowerCase(),
-        password,
-      });
+      const { data, error } =
+        await supabase.auth.signInWithPassword({
+          email: email.trim().toLowerCase(),
+          password,
+        });
 
       if (error) {
-        Toast.show({ type: "error", text1: error.message });
+        Toast.show({
+          type: "error",
+          text1: "Email ou senha incorretos",
+        });
+
         return;
       }
 
       if (!data.user) {
-        Toast.show({ type: "error", text1: "Usuário não encontrado" });
+        Toast.show({
+          type: "error",
+          text1: "Usuário não encontrado",
+        });
+
         return;
       }
 
-      Toast.show({ type: "success", text1: "Login realizado!" });
+      Toast.show({
+        type: "success",
+        text1: "Login realizado!",
+      });
+
       router.replace("/(app)");
     } catch (err) {
       console.log(err);
-      Toast.show({ type: "error", text1: "Algo deu errado" });
+
+      Toast.show({
+        type: "error",
+        text1: "Algo deu errado",
+      });
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleForgotPassword() {
+    if (!email.trim()) {
+      Toast.show({
+        type: "error",
+        text1: "Digite seu email primeiro",
+      });
+
+      return;
+    }
+
+    try {
+      const { error } =
+        await supabase.auth.resetPasswordForEmail(
+          email.trim().toLowerCase()
+        );
+
+      if (error) {
+        console.log(error);
+
+        Toast.show({
+          type: "error",
+          text1:
+            "Não foi possível enviar o email",
+        });
+
+        return;
+      }
+
+      Toast.show({
+        type: "success",
+        text1:
+          "Email de recuperação enviado!",
+        text2:
+          "Verifique sua caixa de entrada",
+      });
+    } catch (err) {
+      console.log(err);
+
+      Toast.show({
+        type: "error",
+        text1: "Algo deu errado",
+      });
     }
   }
 
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      behavior={
+        Platform.OS === "ios"
+          ? "padding"
+          : "height"
+      }
     >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <TouchableWithoutFeedback
+        onPress={Keyboard.dismiss}
+      >
         <ScrollView
-          contentContainerStyle={{ flexGrow: 1 }}
+          contentContainerStyle={{
+            flexGrow: 1,
+          }}
           keyboardShouldPersistTaps="handled"
         >
           <View style={styles.container}>
             <View style={styles.logoContainer}>
               <View style={styles.logoIcon}>
-                <Ionicons name="chatbubbles" size={28} color={COLORS.white} />
+                <Ionicons
+                  name="chatbubbles"
+                  size={28}
+                  color={COLORS.white}
+                />
               </View>
-              <Text style={styles.logoText}>PsyChat</Text>
+
+              <Text style={styles.logoText}>
+                PsyChat
+              </Text>
             </View>
 
             <View style={styles.card}>
-              <Text style={styles.title}>Entrar</Text>
+              <Text style={styles.title}>
+                Entrar
+              </Text>
 
               <TextInput
                 placeholder="Email"
-                placeholderTextColor={COLORS.placeholder}
+                placeholderTextColor={
+                  COLORS.placeholder
+                }
                 value={email}
                 onChangeText={setEmail}
                 style={styles.input}
@@ -94,44 +203,86 @@ export default function Login() {
                 autoCapitalize="none"
               />
 
-              <View style={styles.passwordContainer}>
+              <View
+                style={styles.passwordContainer}
+              >
                 <TextInput
                   placeholder="Senha"
-                  placeholderTextColor={COLORS.placeholder}
-                  secureTextEntry={!showPassword}
+                  placeholderTextColor={
+                    COLORS.placeholder
+                  }
+                  secureTextEntry={
+                    !showPassword
+                  }
                   value={password}
                   onChangeText={setPassword}
                   style={styles.passwordInput}
                 />
+
                 <TouchableOpacity
-                  onPress={() => setShowPassword(!showPassword)}
+                  onPress={() =>
+                    setShowPassword(
+                      !showPassword
+                    )
+                  }
                 >
                   <Ionicons
-                    name={showPassword ? "eye" : "eye-off"}
+                    name={
+                      showPassword
+                        ? "eye"
+                        : "eye-off"
+                    }
                     size={22}
-                    color={COLORS.textSecondary}
+                    color={
+                      COLORS.textSecondary
+                    }
                   />
                 </TouchableOpacity>
               </View>
 
               <TouchableOpacity
+                onPress={
+                  handleForgotPassword
+                }
+                style={styles.forgotContainer}
+              >
+                <Text style={styles.forgotText}>
+                  Esqueceu sua senha?
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
                 onPress={handleLogin}
-                style={[styles.button, loading && { opacity: 0.7 }]}
+                style={[
+                  styles.button,
+                  loading && {
+                    opacity: 0.7,
+                  },
+                ]}
                 disabled={loading}
               >
                 {loading ? (
-                  <ActivityIndicator color={COLORS.white} />
+                  <ActivityIndicator
+                    color={COLORS.white}
+                  />
                 ) : (
-                  <Text style={styles.buttonText}>Entrar</Text>
+                  <Text
+                    style={styles.buttonText}
+                  >
+                    Entrar
+                  </Text>
                 )}
               </TouchableOpacity>
 
               <TouchableOpacity
-                onPress={() => router.push("/register")}
+                onPress={() =>
+                  router.push("/register")
+                }
                 style={styles.link}
               >
                 <Text style={styles.linkText}>
-                  Não tem conta? Cadastre-se
+                  Não tem conta?
+                  Cadastre-se
                 </Text>
               </TouchableOpacity>
             </View>
@@ -164,7 +315,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 14,
     shadowColor: COLORS.shadow,
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
     shadowOpacity: 0.14,
     shadowRadius: 6,
     elevation: 5,
@@ -177,13 +331,6 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
 
-  subtitle: {
-    marginTop: 6,
-    fontSize: 14,
-    color: COLORS.textSecondary,
-    textAlign: "center",
-  },
-
   card: {
     backgroundColor: COLORS.card,
     borderRadius: 24,
@@ -191,7 +338,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.border,
     shadowColor: COLORS.shadow,
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
     shadowOpacity: 0.08,
     shadowRadius: 8,
     elevation: 4,
@@ -224,7 +374,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#F8FBFF",
     paddingHorizontal: 14,
     borderRadius: 14,
-    marginBottom: 18,
   },
 
   passwordInput: {
@@ -234,13 +383,28 @@ const styles = StyleSheet.create({
     color: COLORS.textPrimary,
   },
 
+  forgotContainer: {
+    marginTop: 14,
+    marginBottom: 20,
+    alignItems: "flex-end",
+  },
+
+  forgotText: {
+    color: COLORS.primaryDark,
+    fontWeight: "600",
+    fontSize: 14,
+  },
+
   button: {
     backgroundColor: COLORS.primaryDark,
     paddingVertical: 16,
     borderRadius: 16,
     alignItems: "center",
     shadowColor: COLORS.shadow,
-    shadowOffset: { width: 0, height: 3 },
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
     shadowOpacity: 0.12,
     shadowRadius: 4,
     elevation: 3,

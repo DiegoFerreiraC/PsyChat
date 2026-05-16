@@ -20,14 +20,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // 1. Checar sessão atual ao abrir o app
+    //  Checar sessão atual ao abrir o app
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
     });
 
-    // 2. Ouvir mudanças (Login, Logout, troca de senha)
+    //  Ouvir mudanças (Login, Logout, troca de senha)
     const { data: authListener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         setSession(session);
@@ -48,5 +48,4 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-// Hook personalizado para usar o contexto facilmente
 export const useAuth = () => useContext(AuthContext);
