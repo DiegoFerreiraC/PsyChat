@@ -1,16 +1,5 @@
 import { useEffect, useState } from "react";
-
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Linking,
-  ScrollView,
-  ActivityIndicator,
-  Alert,
-} from "react-native";
-
+import { View, Text, TouchableOpacity, Linking, ScrollView, ActivityIndicator, Alert } from "react-native";
 import * as Location from "expo-location";
 
 type Place = {
@@ -21,76 +10,72 @@ type Place = {
 
 export default function SupportScreen() {
   const [loading, setLoading] = useState(true);
-
   const [city, setCity] = useState("");
-
   const [caps, setCaps] = useState<Place[]>([]);
-
-  const [hospitals, setHospitals] = useState<
-    Place[]
-  >([]);
+  const [hospitals, setHospitals] = useState<Place[]>([]);
 
   useEffect(() => {
     getLocationAndPlaces();
   }, []);
 
-  const getLocationAndPlaces = async () => {
-    try {
-      const { status } =
-        await Location.requestForegroundPermissionsAsync();
+  const getLocationAndPlaces =
+    async () => {
+      try {
+        const { status } =
+          await Location.requestForegroundPermissionsAsync();
 
-      if (status !== "granted") {
-        Alert.alert(
-          "Permissão negada",
-          "É necessário permitir acesso à localização."
-        );
+        if (status !== "granted") {
+          Alert.alert(
+            "Permissão negada",
+            "É necessário permitir acesso à localização."
+          );
 
-        setLoading(false);
+          setLoading(false);
 
-        return;
-      }
+          return;
+        }
 
-      const location =
-        await Location.getCurrentPositionAsync(
-          {}
-        );
+        const location =
+          await Location.getCurrentPositionAsync(
+            {}
+          );
 
-      const { latitude, longitude } =
-        location.coords;
+        const { latitude, longitude } =
+          location.coords;
 
-      const reverse =
-        await Location.reverseGeocodeAsync({
+        const reverse =
+          await Location.reverseGeocodeAsync({
+            latitude,
+            longitude,
+          });
+
+        if (reverse.length > 0) {
+          setCity(
+            `${reverse[0].city || ""} - ${
+              reverse[0].region || ""
+            }`
+          );
+        }
+
+        await searchPlaces(
           latitude,
           longitude,
-        });
-
-      if (reverse.length > 0) {
-        setCity(
-          `${reverse[0].city || ""} - ${
-            reverse[0].region || ""
-          }`
+          "clinic",
+          setCaps
         );
+
+        await searchPlaces(
+          latitude,
+          longitude,
+          "hospital",
+          setHospitals
+        );
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setLoading(false);
       }
-
-      await searchPlaces(
-        latitude,
-        longitude,
-        "clinic",
-        setCaps
-      );
-
-      await searchPlaces(
-        latitude,
-        longitude,
-        "hospital",
-        setHospitals
-      );
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
 
   const searchPlaces = async (
     lat: number,
@@ -147,16 +132,26 @@ export default function SupportScreen() {
   const renderPlace = (item: Place) => (
     <TouchableOpacity
       key={`${item.lat}-${item.lon}`}
-      style={styles.card}
+      className="bg-white p-4 rounded-2xl mb-3"
+      style={{
+        shadowColor: "#1E3A8A",
+        shadowOffset: {
+          width: 0,
+          height: 2,
+        },
+        shadowOpacity: 0.08,
+        shadowRadius: 4,
+        elevation: 3,
+      }}
       onPress={() =>
         openMaps(item.lat, item.lon)
       }
     >
-      <Text style={styles.placeName}>
+      <Text className="text-[15px] font-semibold text-[#1E293B]">
         {item.name}
       </Text>
 
-      <Text style={styles.openText}>
+      <Text className="mt-2 text-[#3B82F6] font-bold">
         Abrir no Google Maps
       </Text>
     </TouchableOpacity>
@@ -164,10 +159,10 @@ export default function SupportScreen() {
 
   if (loading) {
     return (
-      <View style={styles.loadingContainer}>
+      <View className="flex-1 justify-center items-center bg-[#F1F6FB]">
         <ActivityIndicator size="large" />
 
-        <Text style={styles.loadingText}>
+        <Text className="mt-[14px] text-[16px] text-[#1E293B]">
           Buscando apoio próximo...
         </Text>
       </View>
@@ -175,74 +170,110 @@ export default function SupportScreen() {
   }
 
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.title}>
+    <ScrollView className="flex-1 bg-[#F1F6FB] px-5">
+      <Text className="text-[28px] font-bold text-[#1E293B] mb-[10px]">
         Apoio psicológico próximo
       </Text>
 
-      <Text style={styles.city}>
+      <Text className="text-[15px] text-[#64748B] mb-6">
         Sua localização: {city}
       </Text>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>
+      <View className="mb-7">
+        <Text className="text-[20px] font-bold text-[#1E293B] mb-[14px]">
           Clínicas e CAPS próximos
         </Text>
 
         {caps.length > 0 ? (
           caps.map(renderPlace)
         ) : (
-          <Text style={styles.emptyText}>
+          <Text className="text-[#64748B] text-[14px] mt-1">
             Nenhuma clínica encontrada.
           </Text>
         )}
       </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>
+      <View className="mb-7">
+        <Text className="text-[20px] font-bold text-[#1E293B] mb-[14px]">
           Hospitais próximos
         </Text>
 
         {hospitals.length > 0 ? (
           hospitals.map(renderPlace)
         ) : (
-          <Text style={styles.emptyText}>
+          <Text className="text-[#64748B] text-[14px] mt-1">
             Nenhum hospital encontrado.
           </Text>
         )}
       </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>
+      <View className="mb-7">
+        <Text className="text-[20px] font-bold text-[#1E293B] mb-[14px]">
           Contatos de emergência
         </Text>
 
-        <View style={styles.card}>
-          <Text style={styles.placeName}>
+        <View
+          className="bg-white p-4 rounded-2xl mb-3"
+          style={{
+            shadowColor: "#1E3A8A",
+            shadowOffset: {
+              width: 0,
+              height: 2,
+            },
+            shadowOpacity: 0.08,
+            shadowRadius: 4,
+            elevation: 3,
+          }}
+        >
+          <Text className="text-[15px] font-semibold text-[#1E293B]">
             CVV - Centro de Valorização da Vida
           </Text>
 
-          <Text style={styles.phone}>
+          <Text className="mt-2 text-[18px] font-bold text-[#EF4444]">
             Ligue 188
           </Text>
         </View>
 
-        <View style={styles.card}>
-          <Text style={styles.placeName}>
+        <View
+          className="bg-white p-4 rounded-2xl mb-3"
+          style={{
+            shadowColor: "#1E3A8A",
+            shadowOffset: {
+              width: 0,
+              height: 2,
+            },
+            shadowOpacity: 0.08,
+            shadowRadius: 4,
+            elevation: 3,
+          }}
+        >
+          <Text className="text-[15px] font-semibold text-[#1E293B]">
             SAMU
           </Text>
 
-          <Text style={styles.phone}>
+          <Text className="mt-2 text-[18px] font-bold text-[#EF4444]">
             Ligue 192
           </Text>
         </View>
 
-        <View style={styles.card}>
-          <Text style={styles.placeName}>
+        <View
+          className="bg-white p-4 rounded-2xl mb-3"
+          style={{
+            shadowColor: "#1E3A8A",
+            shadowOffset: {
+              width: 0,
+              height: 2,
+            },
+            shadowOpacity: 0.08,
+            shadowRadius: 4,
+            elevation: 3,
+          }}
+        >
+          <Text className="text-[15px] font-semibold text-[#1E293B]">
             Polícia Militar
           </Text>
 
-          <Text style={styles.phone}>
+          <Text className="mt-2 text-[18px] font-bold text-[#EF4444]">
             Ligue 190
           </Text>
         </View>
@@ -250,88 +281,3 @@ export default function SupportScreen() {
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F1F6FB",
-    padding: 20,
-  },
-
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#F1F6FB",
-  },
-
-  loadingText: {
-    marginTop: 14,
-    fontSize: 16,
-    color: "#1E293B",
-  },
-
-  title: {
-    fontSize: 28,
-    fontWeight: "700",
-    color: "#1E293B",
-    marginBottom: 10,
-  },
-
-  city: {
-    fontSize: 15,
-    color: "#64748B",
-    marginBottom: 24,
-  },
-
-  section: {
-    marginBottom: 28,
-  },
-
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: "#1E293B",
-    marginBottom: 14,
-  },
-
-  card: {
-    backgroundColor: "white",
-    padding: 16,
-    borderRadius: 16,
-    marginBottom: 12,
-    shadowColor: "#1E3A8A",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-
-  placeName: {
-    fontSize: 15,
-    fontWeight: "600",
-    color: "#1E293B",
-  },
-
-  openText: {
-    marginTop: 8,
-    color: "#3B82F6",
-    fontWeight: "700",
-  },
-
-  phone: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: "700",
-    color: "#EF4444",
-  },
-
-  emptyText: {
-    color: "#64748B",
-    fontSize: 14,
-    marginTop: 4,
-  },
-});

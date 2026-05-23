@@ -1,29 +1,23 @@
 import { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  Alert,
-  ScrollView,
-} from "react-native";
-
+import { View, Text, TextInput, TouchableOpacity, Alert, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../contexts/AuthContext";
 
 export default function ProfileScreen() {
   const { user } = useAuth();
 
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
+  const [username, setUsername] =
+    useState("");
+
+  const [email, setEmail] =
+    useState("");
 
   const [newPassword, setNewPassword] =
     useState("");
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] =
+    useState(false);
 
   useEffect(() => {
     loadProfile();
@@ -135,29 +129,28 @@ export default function ProfileScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView className="flex-1 bg-[#F1F6FB]">
       <ScrollView
-        contentContainerStyle={styles.container}
+        contentContainerStyle={{
+          padding: 20,
+        }}
       >
-        <Text style={styles.title}>
+        <Text className="text-[28px] font-bold text-[#1E293B] mb-5">
           Meu Perfil
         </Text>
 
-        <View style={styles.card}>
-          <Text style={styles.label}>
+        <View className="bg-white p-[18px] rounded-[18px] mb-5">
+          <Text className="text-[14px] text-[#64748B] mb-2 mt-[10px]">
             Email
           </Text>
 
           <TextInput
             value={email}
             editable={false}
-            style={[
-              styles.input,
-              styles.disabledInput,
-            ]}
+            className="border border-[#D6E4F0] rounded-[14px] px-[14px] py-3 bg-[#F8FBFF] text-[15px] text-[#1E293B] opacity-70"
           />
 
-          <Text style={styles.label}>
+          <Text className="text-[14px] text-[#64748B] mb-2 mt-[10px]">
             Username
           </Text>
 
@@ -165,22 +158,22 @@ export default function ProfileScreen() {
             value={username}
             onChangeText={setUsername}
             placeholder="Digite seu username"
-            style={styles.input}
+            className="border border-[#D6E4F0] rounded-[14px] px-[14px] py-3 bg-[#F8FBFF] text-[15px] text-[#1E293B]"
           />
 
           <TouchableOpacity
-            style={styles.button}
+            className="bg-[#60A5FA] py-[14px] rounded-[14px] mt-[18px] items-center"
             onPress={updateProfile}
             disabled={loading}
           >
-            <Text style={styles.buttonText}>
+            <Text className="text-white text-[16px] font-bold">
               Salvar perfil
             </Text>
           </TouchableOpacity>
         </View>
 
-        <View style={styles.card}>
-          <Text style={styles.sectionTitle}>
+        <View className="bg-white p-[18px] rounded-[18px] mb-5">
+          <Text className="text-[18px] font-bold text-[#1E293B] mb-3">
             Alterar senha
           </Text>
 
@@ -189,15 +182,15 @@ export default function ProfileScreen() {
             onChangeText={setNewPassword}
             placeholder="Nova senha"
             secureTextEntry
-            style={styles.input}
+            className="border border-[#D6E4F0] rounded-[14px] px-[14px] py-3 bg-[#F8FBFF] text-[15px] text-[#1E293B]"
           />
 
           <TouchableOpacity
-            style={styles.button}
+            className="bg-[#60A5FA] py-[14px] rounded-[14px] mt-[18px] items-center"
             onPress={updatePassword}
             disabled={loading}
           >
-            <Text style={styles.buttonText}>
+            <Text className="text-white text-[16px] font-bold">
               Atualizar senha
             </Text>
           </TouchableOpacity>
@@ -206,71 +199,3 @@ export default function ProfileScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#F1F6FB",
-  },
-
-  container: {
-    padding: 20,
-  },
-
-  title: {
-    fontSize: 28,
-    fontWeight: "700",
-    color: "#1E293B",
-    marginBottom: 20,
-  },
-
-  card: {
-    backgroundColor: "white",
-    padding: 18,
-    borderRadius: 18,
-    marginBottom: 20,
-  },
-
-  label: {
-    fontSize: 14,
-    color: "#64748B",
-    marginBottom: 8,
-    marginTop: 10,
-  },
-
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: "#1E293B",
-    marginBottom: 12,
-  },
-
-  input: {
-    borderWidth: 1,
-    borderColor: "#D6E4F0",
-    borderRadius: 14,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    backgroundColor: "#F8FBFF",
-    fontSize: 15,
-    color: "#1E293B",
-  },
-
-  disabledInput: {
-    opacity: 0.7,
-  },
-
-  button: {
-    backgroundColor: "#60A5FA",
-    paddingVertical: 14,
-    borderRadius: 14,
-    marginTop: 18,
-    alignItems: "center",
-  },
-
-  buttonText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "700",
-  },
-});

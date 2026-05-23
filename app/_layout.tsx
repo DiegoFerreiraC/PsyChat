@@ -3,6 +3,7 @@ import { AuthProvider } from "../contexts/AuthContext";
 import Toast from 'react-native-toast-message';
 import 'react-native-gesture-handler';
 import 'react-native-reanimated';
+import '../global.css';
 
 export default function RootLayout() {
   return (

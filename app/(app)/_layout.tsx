@@ -1,6 +1,6 @@
 import { Stack, Redirect } from "expo-router";
 import { useAuth } from "../../contexts/AuthContext";
-import { ActivityIndicator, View, StyleSheet } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 
 const COLORS = {
   background: "#F1F6FB",
@@ -12,7 +12,7 @@ export default function AppLayout() {
 
   if (loading) {
     return (
-      <View style={styles.loadingContainer}>
+      <View className="flex-1 items-center justify-center bg-[#F1F6FB]">
         <ActivityIndicator size="large" color={COLORS.primary} />
       </View>
     );
@@ -24,12 +24,3 @@ export default function AppLayout() {
 
   return <Stack screenOptions={{ headerShown: false }} />;
 }
-
-const styles = StyleSheet.create({
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: COLORS.background,
-  },
-});

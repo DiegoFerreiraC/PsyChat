@@ -1,26 +1,11 @@
 import { useState, useRef, useEffect } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  FlatList,
-  TextInput,
-  KeyboardAvoidingView,
-  Platform,
-  Animated,
-  BackHandler,
-} from "react-native";
-
+import { View, Text, TouchableOpacity, FlatList, TextInput, KeyboardAvoidingView, Platform, Animated, BackHandler } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import axios from "axios";
-
 import DrawerMenu from "../(app)/menu";
-
 import { useAuth } from "../../contexts/AuthContext";
 import { supabase } from "../../lib/supabase";
-
 import { useLocalSearchParams } from "expo-router";
 
 const DRAWER_WIDTH = 250;
@@ -50,17 +35,10 @@ export default function ChatConversationScreen() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState("");
   const [loading, setLoading] = useState(false);
-
   const { user } = useAuth();
-
   const { id } = useLocalSearchParams();
-
   const [drawerOpen, setDrawerOpen] = useState(false);
-
-  const drawerAnim = useRef(
-    new Animated.Value(-DRAWER_WIDTH)
-  ).current;
-
+  const drawerAnim = useRef(new Animated.Value(-DRAWER_WIDTH)).current;
   const flatListRef = useRef<FlatList>(null);
 
   const openDrawer = () => {
@@ -188,9 +166,16 @@ export default function ChatConversationScreen() {
       fromUser: true,
     };
 
-    setMessages((prev) => [...prev, userMessage]);
+    setMessages((prev) => [
+      ...prev,
+      userMessage,
+    ]);
 
-    await saveMessage(id, userMessage.text, true);
+    await saveMessage(
+      id,
+      userMessage.text,
+      true
+    );
 
     const currentMessage = inputText;
 
@@ -200,7 +185,7 @@ export default function ChatConversationScreen() {
 
     try {
       const response = await axios.post(
-        "http://192.168.2.13:3000/chat",
+        "http://192.168.2.16:3000/chat",
         {
           message: currentMessage,
         }
@@ -212,17 +197,27 @@ export default function ChatConversationScreen() {
         fromUser: false,
       };
 
-      setMessages((prev) => [...prev, botMessage]);
+      setMessages((prev) => [
+        ...prev,
+        botMessage,
+      ]);
 
-      await saveMessage(id, botMessage.text, false);
+      await saveMessage(
+        id,
+        botMessage.text,
+        false
+      );
     } catch (error) {
       console.log(error);
 
       setMessages((prev) => [
         ...prev,
         {
-          id: Date.now().toString() + "-error",
-          text: "Erro ao conectar com a IA.",
+          id:
+            Date.now().toString() +
+            "-error",
+          text:
+            "Erro ao conectar com a IA.",
           fromUser: false,
         },
       ]);
@@ -237,19 +232,28 @@ export default function ChatConversationScreen() {
     item: Message;
   }) => (
     <View
-      style={[
-        styles.messageContainer,
+      className={`px-[14px] py-3 rounded-[18px] mb-[10px] max-w-[80%] ${
         item.fromUser
-          ? styles.userMessage
-          : styles.botMessage,
-      ]}
+          ? "bg-[#BFDBFE] self-end rounded-br-[4px]"
+          : "bg-white self-start rounded-bl-[4px] border border-[#D6E4F0]"
+      }`}
+      style={{
+        shadowColor: COLORS.shadow,
+        shadowOffset: {
+          width: 0,
+          height: 1,
+        },
+        shadowOpacity: 0.06,
+        shadowRadius: 2,
+        elevation: 2,
+      }}
     >
       <Text
-        style={[
-          styles.messageText,
-          item.fromUser &&
-            styles.userMessageText,
-        ]}
+        className={`text-[15px] leading-[22px] text-[#1E293B] ${
+          item.fromUser
+            ? "font-medium"
+            : ""
+        }`}
       >
         {item.text}
       </Text>
@@ -257,22 +261,36 @@ export default function ChatConversationScreen() {
   );
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView className="flex-1 bg-[#F1F6FB]" style = {{ overflow: "hidden"}}>
       <KeyboardAvoidingView
-        style={styles.container}
+        className="flex-1 bg-[#F1F6FB]"
         behavior={
           Platform.OS === "ios"
             ? "padding"
             : "height"
         }
         keyboardVerticalOffset={
-          Platform.OS === "ios" ? 60 : 0
+          Platform.OS === "ios"
+            ? 60
+            : 0
         }
       >
-        <View style={styles.header}>
+        <View
+          className="h-16 bg-[#60A5FA] flex-row items-center justify-between px-4 rounded-b-[18px]"
+          style={{
+            shadowColor: COLORS.shadow,
+            shadowOffset: {
+              width: 0,
+              height: 3,
+            },
+            shadowOpacity: 0.12,
+            shadowRadius: 4,
+            elevation: 5,
+          }}
+        >
           <TouchableOpacity
             onPress={toggleDrawer}
-            style={styles.menuButton}
+            className="w-9 items-center justify-center"
           >
             <Ionicons
               name="menu"
@@ -281,11 +299,11 @@ export default function ChatConversationScreen() {
             />
           </TouchableOpacity>
 
-          <Text style={styles.headerTitle}>
+          <Text className="text-white text-[20px] font-bold">
             PsyChat
           </Text>
 
-          <View style={styles.headerRightSpace} />
+          <View className="w-9" />
         </View>
 
         <DrawerMenu
@@ -300,25 +318,31 @@ export default function ChatConversationScreen() {
           renderItem={renderMessage}
           keyExtractor={(item) => item.id}
           contentContainerStyle={[
-            styles.chatContainer,
-            messages.length === 0 &&
-              styles.emptyChatContainer,
+            {
+              paddingHorizontal: 16,
+              paddingTop: 18,
+              paddingBottom: 12,
+            },
+            messages.length === 0 && {
+              flexGrow: 1,
+              justifyContent: "center",
+            },
           ]}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={
-            <View style={styles.emptyState}>
+            <View className="items-center px-6">
               <Ionicons
                 name="chatbubbles-outline"
                 size={60}
                 color={COLORS.iconSoft}
               />
 
-              <Text style={styles.emptyTitle}>
+              <Text className="mt-4 text-[22px] font-bold text-[#1E293B]">
                 Conversa vazia
               </Text>
 
-              <Text style={styles.emptyText}>
+              <Text className="mt-2 text-[15px] text-[#64748B] text-center leading-[22px]">
                 Continue a conversa com a IA.
               </Text>
             </View>
@@ -326,12 +350,20 @@ export default function ChatConversationScreen() {
           ListFooterComponent={
             loading ? (
               <View
-                style={[
-                  styles.messageContainer,
-                  styles.botMessage,
-                ]}
+                className="px-[14px] py-3 rounded-[18px] mb-[10px] max-w-[80%] bg-white self-start rounded-bl-[4px] border border-[#D6E4F0]"
+                style={{
+                  shadowColor:
+                    COLORS.shadow,
+                  shadowOffset: {
+                    width: 0,
+                    height: 1,
+                  },
+                  shadowOpacity: 0.06,
+                  shadowRadius: 2,
+                  elevation: 2,
+                }}
               >
-                <Text style={styles.messageText}>
+                <Text className="text-[15px] leading-[22px] text-[#1E293B]">
                   Digitando...
                 </Text>
               </View>
@@ -339,14 +371,26 @@ export default function ChatConversationScreen() {
           }
         />
 
-        <View style={styles.inputWrapper}>
-          <View style={styles.inputContainer}>
+        <View className="px-3 pt-2 pb-3">
+          <View
+            className="flex-row items-end bg-white rounded-[24px] pl-[14px] pr-2 py-2 border border-[#D6E4F0]"
+            style={{
+              shadowColor: COLORS.shadow,
+              shadowOffset: {
+                width: 0,
+                height: 1,
+              },
+              shadowOpacity: 0.08,
+              shadowRadius: 3,
+              elevation: 3,
+            }}
+          >
             <TextInput
               placeholder="Escreva sua mensagem..."
               placeholderTextColor={
                 COLORS.textSecondary
               }
-              style={styles.input}
+              className="flex-1 text-[15px] text-[#1E293B] max-h-[100px] py-2 pr-2"
               value={inputText}
               onChangeText={setInputText}
               multiline
@@ -354,10 +398,10 @@ export default function ChatConversationScreen() {
 
             <TouchableOpacity
               onPress={sendMessage}
-              style={[
-                styles.sendButton,
-                loading && { opacity: 0.7 },
-              ]}
+              className="bg-[#3B82F6] w-[42px] h-[42px] rounded-full items-center justify-center"
+              style={{
+                opacity: loading ? 0.7 : 1,
+              }}
             >
               <Ionicons
                 name="send"
@@ -371,169 +415,3 @@ export default function ChatConversationScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: COLORS.background,
-  },
-
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.background,
-  },
-
-  header: {
-    height: 64,
-    backgroundColor: COLORS.header,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
-    borderBottomLeftRadius: 18,
-    borderBottomRightRadius: 18,
-
-    shadowColor: COLORS.shadow,
-    shadowOffset: {
-      width: 0,
-      height: 3,
-    },
-    shadowOpacity: 0.12,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-
-  menuButton: {
-    width: 36,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  headerTitle: {
-    color: COLORS.white,
-    fontSize: 20,
-    fontWeight: "700",
-  },
-
-  headerRightSpace: {
-    width: 36,
-  },
-
-  chatContainer: {
-    paddingHorizontal: 16,
-    paddingTop: 18,
-    paddingBottom: 12,
-  },
-
-  emptyChatContainer: {
-    flexGrow: 1,
-    justifyContent: "center",
-  },
-
-  emptyState: {
-    alignItems: "center",
-    paddingHorizontal: 24,
-  },
-
-  emptyTitle: {
-    marginTop: 16,
-    fontSize: 22,
-    fontWeight: "700",
-    color: COLORS.textPrimary,
-  },
-
-  emptyText: {
-    marginTop: 8,
-    fontSize: 15,
-    color: COLORS.textSecondary,
-    textAlign: "center",
-    lineHeight: 22,
-  },
-
-  messageContainer: {
-    paddingVertical: 12,
-    paddingHorizontal: 14,
-    borderRadius: 18,
-    marginBottom: 10,
-    maxWidth: "80%",
-
-    shadowColor: COLORS.shadow,
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.06,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-
-  userMessage: {
-    backgroundColor: COLORS.userBubble,
-    alignSelf: "flex-end",
-    borderBottomRightRadius: 4,
-  },
-
-  botMessage: {
-    backgroundColor: COLORS.botBubble,
-    alignSelf: "flex-start",
-    borderBottomLeftRadius: 4,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-  },
-
-  messageText: {
-    color: COLORS.textPrimary,
-    fontSize: 15,
-    lineHeight: 22,
-  },
-
-  userMessageText: {
-    color: COLORS.textPrimary,
-    fontWeight: "500",
-  },
-
-  inputWrapper: {
-    paddingHorizontal: 12,
-    paddingTop: 8,
-    paddingBottom: 12,
-  },
-
-  inputContainer: {
-    flexDirection: "row",
-    alignItems: "flex-end",
-    backgroundColor: COLORS.inputBackground,
-    borderRadius: 24,
-    paddingLeft: 14,
-    paddingRight: 8,
-    paddingVertical: 8,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-
-    shadowColor: COLORS.shadow,
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.08,
-    shadowRadius: 3,
-    elevation: 3,
-  },
-
-  input: {
-    flex: 1,
-    fontSize: 15,
-    color: COLORS.textPrimary,
-    maxHeight: 100,
-    paddingVertical: 8,
-    paddingRight: 8,
-  },
-
-  sendButton: {
-    backgroundColor: COLORS.headerDark,
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});

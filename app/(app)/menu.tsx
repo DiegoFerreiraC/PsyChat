@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { View, Text, TouchableOpacity, Animated, StyleSheet, PanResponder, Alert, } from "react-native";
+import { View, Text, TouchableOpacity, Animated, PanResponder } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -42,6 +42,7 @@ export default function Menu({
       duration: 250,
       useNativeDriver: true,
     }).start();
+
     setDrawerOpen(false);
   };
 
@@ -51,6 +52,7 @@ export default function Menu({
       duration: 250,
       useNativeDriver: true,
     }).start();
+
     setDrawerOpen(true);
   };
 
@@ -58,16 +60,23 @@ export default function Menu({
     PanResponder.create({
       onMoveShouldSetPanResponder: (_, gestureState) =>
         drawerOpen && Math.abs(gestureState.dx) > 10,
+
       onPanResponderMove: (_, gestureState) => {
-        const newPos = Math.min(Math.max(-DRAWER_WIDTH, gestureState.dx), 0);
+        const newPos = Math.min(
+          Math.max(-DRAWER_WIDTH, gestureState.dx),
+          0
+        );
+
         drawerAnim.setValue(newPos);
       },
+
       onPanResponderRelease: (_, gestureState) => {
         if (gestureState.dx < -50) closeDrawer();
         else openDrawer();
       },
     })
   ).current;
+
   const handleLogout = async () => {
     try {
       closeDrawer();
@@ -98,51 +107,94 @@ export default function Menu({
     <>
       {drawerOpen && (
         <TouchableOpacity
-          style={styles.overlay}
           activeOpacity={1}
           onPress={closeDrawer}
+          className="absolute inset-0 bg-[rgba(0,0,0,0.25)]"
+          style={{
+            zIndex: 9998,
+          }}
         />
       )}
 
       <Animated.View
-        style={[styles.drawer, { transform: [{ translateX: drawerAnim }] }]}
-        {...panResponder.panHandlers}
+        className="absolute left-0 top-0 h-screen w-[250px] rounded-tr-[20px] rounded-br-[20px]"
+        style={{
+          position: "absolute",
+          zIndex: 9999,
+          height: "100%",
+          backgroundColor: "#FFFFFF",
+
+          transform: [{ translateX: drawerAnim }],
+
+          shadowColor: COLORS.shadow,
+          shadowOffset: {
+            width: 2,
+            height: 0,
+          },
+          shadowOpacity: 0.12,
+          shadowRadius: 8,
+          elevation: 6,
+        }}
       >
-        <SafeAreaView style={styles.drawerSafeArea}>
-          <View style={styles.header}>
-            <View style={styles.logoIcon}>
-              <Ionicons name="chatbubbles" size={22} color={COLORS.white} />
+        <SafeAreaView className="flex-1 px-4 pt-4 pb-4">
+          <View className="flex-row items-center mb-7 pb-4 border-b border-[#D6E4F0]">
+            <View className="w-[42px] h-[42px] rounded-full bg-[#60A5FA] items-center justify-center mr-3">
+              <Ionicons
+                name="chatbubbles"
+                size={22}
+                color={COLORS.white}
+              />
             </View>
+
             <View>
-              <Text style={styles.drawerTitle}>PsyChat</Text>
-              <Text style={styles.drawerSubtitle}>Menu principal</Text>
+              <Text className="text-[22px] font-bold text-[#1E293B]">
+                PsyChat
+              </Text>
+
+              <Text className="text-[13px] text-[#64748B] mt-[2px]">
+                Menu principal
+              </Text>
             </View>
           </View>
 
           <TouchableOpacity
-            style={styles.drawerItem}
+            className="flex-row items-center gap-3 py-[14px] px-3 mb-2 rounded-[14px] bg-[#F8FBFF] border border-[#D6E4F0]"
             onPress={() => {
               closeDrawer();
               router.push("../tabs/profile");
             }}
           >
-            <Ionicons name="person-outline" size={20} color={COLORS.primaryDark} />
-            <Text style={styles.drawerItemText}>Perfil</Text>
+            <Ionicons
+              name="person-outline"
+              size={20}
+              color={COLORS.primaryDark}
+            />
+
+            <Text className="text-[16px] text-[#1E293B] font-medium">
+              Perfil
+            </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={styles.drawerItem}
+            className="flex-row items-center gap-3 py-[14px] px-3 mb-2 rounded-[14px] bg-[#F8FBFF] border border-[#D6E4F0]"
             onPress={() => {
               closeDrawer();
               router.push("../tabs/history");
             }}
           >
-            <Ionicons name="time-outline" size={20} color={COLORS.primaryDark} />
-            <Text style={styles.drawerItemText}>Histórico</Text>
+            <Ionicons
+              name="time-outline"
+              size={20}
+              color={COLORS.primaryDark}
+            />
+
+            <Text className="text-[16px] text-[#1E293B] font-medium">
+              Histórico
+            </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={styles.drawerItem}
+            className="flex-row items-center gap-3 py-[14px] px-3 mb-2 rounded-[14px] bg-[#F8FBFF] border border-[#D6E4F0]"
             onPress={() => {
               closeDrawer();
               router.push("/");
@@ -154,13 +206,13 @@ export default function Menu({
               color={COLORS.primaryDark}
             />
 
-            <Text style={styles.drawerItemText}>
+            <Text className="text-[16px] text-[#1E293B] font-medium">
               Novo chat
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={styles.drawerItem}
+            className="flex-row items-center gap-3 py-[14px] px-3 mb-2 rounded-[14px] bg-[#F8FBFF] border border-[#D6E4F0]"
             onPress={() => {
               closeDrawer();
               router.push("/suport/apoio");
@@ -172,124 +224,29 @@ export default function Menu({
               color={COLORS.primaryDark}
             />
 
-            <Text style={styles.drawerItemText}>
+            <Text className="text-[16px] text-[#1E293B] font-medium">
               Apoio próximo
             </Text>
           </TouchableOpacity>
 
-          <View style={{ flex: 1 }} />
+          <View className="flex-1" />
 
-          <TouchableOpacity style={styles.logoutItem} onPress={handleLogout}>
-            <Ionicons name="log-out-outline" size={20} color={COLORS.danger} />
-            <Text style={styles.logoutText}>Sair</Text>
+          <TouchableOpacity
+            className="flex-row items-center gap-3 py-[14px] px-3 rounded-[14px] bg-[#FEE2E2] border border-[#FECACA]"
+            onPress={handleLogout}
+          >
+            <Ionicons
+              name="log-out-outline"
+              size={20}
+              color={COLORS.danger}
+            />
+
+            <Text className="text-[16px] text-[#EF4444] font-bold">
+              Sair
+            </Text>
           </TouchableOpacity>
-
         </SafeAreaView>
       </Animated.View>
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  drawer: {
-    position: "absolute",
-    top: 60,
-    bottom: 0,
-    left: 0,
-    width: DRAWER_WIDTH,
-    backgroundColor: COLORS.drawer,
-    zIndex: 100,
-    elevation: 6,
-    borderTopRightRadius: 20,
-    borderBottomRightRadius: 20,
-    shadowColor: COLORS.shadow,
-    shadowOffset: { width: 2, height: 0 },
-    shadowOpacity: 0.12,
-    shadowRadius: 8,
-  },
-
-  drawerSafeArea: {
-    flex: 1,
-    paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 16,
-  },
-
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 28,
-    paddingBottom: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
-  },
-
-  logoIcon: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    backgroundColor: COLORS.primary,
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: 12,
-  },
-
-  drawerTitle: {
-    fontSize: 22,
-    fontWeight: "700",
-    color: COLORS.textPrimary,
-  },
-
-  drawerSubtitle: {
-    fontSize: 13,
-    color: COLORS.textSecondary,
-    marginTop: 2,
-  },
-
-  drawerItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-    paddingVertical: 14,
-    paddingHorizontal: 12,
-    marginBottom: 8,
-    borderRadius: 14,
-    backgroundColor: "#F8FBFF",
-    borderWidth: 1,
-    borderColor: COLORS.border,
-  },
-
-  drawerItemText: {
-    fontSize: 16,
-    color: COLORS.textPrimary,
-    fontWeight: "500",
-  },
-
-  logoutItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-    paddingVertical: 14,
-    paddingHorizontal: 12,
-    borderRadius: 14,
-    backgroundColor: COLORS.dangerSoft,
-    borderWidth: 1,
-    borderColor: "#FECACA",
-  },
-
-  logoutText: {
-    fontSize: 16,
-    color: COLORS.danger,
-    fontWeight: "700",
-  },
-
-  overlay: {
-    position: "absolute",
-    top: 60,
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: COLORS.overlay,
-    zIndex: 50,
-  },
-});

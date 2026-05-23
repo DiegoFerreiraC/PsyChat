@@ -1,25 +1,8 @@
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  ActivityIndicator,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  TouchableWithoutFeedback,
-  Keyboard,
-} from "react-native";
-
+import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView, TouchableWithoutFeedback, Keyboard } from "react-native";
 import { useState } from "react";
-
 import { supabase } from "../../lib/supabase";
-
 import { useRouter } from "expo-router";
-
 import Toast from "react-native-toast-message";
-
 import { Ionicons } from "@expo/vector-icons";
 
 const COLORS = {
@@ -39,16 +22,9 @@ const COLORS = {
 
 export default function Login() {
   const [email, setEmail] = useState("");
-
-  const [password, setPassword] =
-    useState("");
-
-  const [loading, setLoading] =
-    useState(false);
-
-  const [showPassword, setShowPassword] =
-    useState(false);
-
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
   async function handleLogin() {
@@ -155,7 +131,7 @@ export default function Login() {
 
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1 }}
+      className="flex-1"
       behavior={
         Platform.OS === "ios"
           ? "padding"
@@ -171,9 +147,21 @@ export default function Login() {
           }}
           keyboardShouldPersistTaps="handled"
         >
-          <View style={styles.container}>
-            <View style={styles.logoContainer}>
-              <View style={styles.logoIcon}>
+          <View className="flex-1 justify-center px-6 bg-[#F1F6FB]">
+            <View className="items-center mb-8">
+              <View
+                className="w-[68px] h-[68px] rounded-full bg-[#60A5FA] items-center justify-center mb-[14px]"
+                style={{
+                  shadowColor: COLORS.shadow,
+                  shadowOffset: {
+                    width: 0,
+                    height: 4,
+                  },
+                  shadowOpacity: 0.14,
+                  shadowRadius: 6,
+                  elevation: 5,
+                }}
+              >
                 <Ionicons
                   name="chatbubbles"
                   size={28}
@@ -181,13 +169,25 @@ export default function Login() {
                 />
               </View>
 
-              <Text style={styles.logoText}>
+              <Text className="text-[32px] font-extrabold text-[#3B82F6] tracking-[0.5px]">
                 PsyChat
               </Text>
             </View>
 
-            <View style={styles.card}>
-              <Text style={styles.title}>
+            <View
+              className="bg-white rounded-[24px] p-[22px] border border-[#D6E4F0]"
+              style={{
+                shadowColor: COLORS.shadow,
+                shadowOffset: {
+                  width: 0,
+                  height: 4,
+                },
+                shadowOpacity: 0.08,
+                shadowRadius: 8,
+                elevation: 4,
+              }}
+            >
+              <Text className="text-[28px] font-bold text-[#1E293B] mb-[22px] text-center">
                 Entrar
               </Text>
 
@@ -198,14 +198,12 @@ export default function Login() {
                 }
                 value={email}
                 onChangeText={setEmail}
-                style={styles.input}
+                className="border border-[#D6E4F0] bg-[#F8FBFF] p-[14px] rounded-[14px] mb-4 text-[15px] text-[#1E293B]"
                 keyboardType="email-address"
                 autoCapitalize="none"
               />
 
-              <View
-                style={styles.passwordContainer}
-              >
+              <View className="flex-row items-center border border-[#D6E4F0] bg-[#F8FBFF] px-[14px] rounded-[14px]">
                 <TextInput
                   placeholder="Senha"
                   placeholderTextColor={
@@ -216,7 +214,7 @@ export default function Login() {
                   }
                   value={password}
                   onChangeText={setPassword}
-                  style={styles.passwordInput}
+                  className="flex-1 py-[14px] text-[15px] text-[#1E293B]"
                 />
 
                 <TouchableOpacity
@@ -244,21 +242,28 @@ export default function Login() {
                 onPress={
                   handleForgotPassword
                 }
-                style={styles.forgotContainer}
+                className="mt-[14px] mb-5 items-end"
               >
-                <Text style={styles.forgotText}>
+                <Text className="text-[#3B82F6] font-semibold text-[14px]">
                   Esqueceu sua senha?
                 </Text>
               </TouchableOpacity>
 
               <TouchableOpacity
                 onPress={handleLogin}
-                style={[
-                  styles.button,
-                  loading && {
-                    opacity: 0.7,
+                className="bg-[#3B82F6] py-4 rounded-[16px] items-center"
+                style={{
+                  opacity: loading ? 0.7 : 1,
+
+                  shadowColor: COLORS.shadow,
+                  shadowOffset: {
+                    width: 0,
+                    height: 3,
                   },
-                ]}
+                  shadowOpacity: 0.12,
+                  shadowRadius: 4,
+                  elevation: 3,
+                }}
                 disabled={loading}
               >
                 {loading ? (
@@ -266,9 +271,7 @@ export default function Login() {
                     color={COLORS.white}
                   />
                 ) : (
-                  <Text
-                    style={styles.buttonText}
-                  >
+                  <Text className="text-white font-bold text-[16px]">
                     Entrar
                   </Text>
                 )}
@@ -278,9 +281,9 @@ export default function Login() {
                 onPress={() =>
                   router.push("/register")
                 }
-                style={styles.link}
+                className="mt-[18px] items-center"
               >
-                <Text style={styles.linkText}>
+                <Text className="text-[#3B82F6] font-bold text-[14px]">
                   Não tem conta?
                   Cadastre-se
                 </Text>
@@ -292,138 +295,3 @@ export default function Login() {
     </KeyboardAvoidingView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    paddingHorizontal: 24,
-    backgroundColor: COLORS.background,
-  },
-
-  logoContainer: {
-    alignItems: "center",
-    marginBottom: 32,
-  },
-
-  logoIcon: {
-    width: 68,
-    height: 68,
-    borderRadius: 34,
-    backgroundColor: COLORS.primary,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 14,
-    shadowColor: COLORS.shadow,
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.14,
-    shadowRadius: 6,
-    elevation: 5,
-  },
-
-  logoText: {
-    fontSize: 32,
-    fontWeight: "800",
-    color: COLORS.primaryDark,
-    letterSpacing: 0.5,
-  },
-
-  card: {
-    backgroundColor: COLORS.card,
-    borderRadius: 24,
-    padding: 22,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    shadowColor: COLORS.shadow,
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-
-  title: {
-    fontSize: 28,
-    fontWeight: "700",
-    color: COLORS.textPrimary,
-    marginBottom: 22,
-    textAlign: "center",
-  },
-
-  input: {
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    backgroundColor: "#F8FBFF",
-    padding: 14,
-    borderRadius: 14,
-    marginBottom: 16,
-    fontSize: 15,
-    color: COLORS.textPrimary,
-  },
-
-  passwordContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    backgroundColor: "#F8FBFF",
-    paddingHorizontal: 14,
-    borderRadius: 14,
-  },
-
-  passwordInput: {
-    flex: 1,
-    paddingVertical: 14,
-    fontSize: 15,
-    color: COLORS.textPrimary,
-  },
-
-  forgotContainer: {
-    marginTop: 14,
-    marginBottom: 20,
-    alignItems: "flex-end",
-  },
-
-  forgotText: {
-    color: COLORS.primaryDark,
-    fontWeight: "600",
-    fontSize: 14,
-  },
-
-  button: {
-    backgroundColor: COLORS.primaryDark,
-    paddingVertical: 16,
-    borderRadius: 16,
-    alignItems: "center",
-    shadowColor: COLORS.shadow,
-    shadowOffset: {
-      width: 0,
-      height: 3,
-    },
-    shadowOpacity: 0.12,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-
-  buttonText: {
-    color: COLORS.white,
-    fontWeight: "700",
-    fontSize: 16,
-  },
-
-  link: {
-    marginTop: 18,
-    alignItems: "center",
-  },
-
-  linkText: {
-    color: COLORS.primaryDark,
-    fontWeight: "700",
-    fontSize: 14,
-  },
-});
